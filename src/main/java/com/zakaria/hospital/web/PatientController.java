@@ -2,16 +2,24 @@ package com.zakaria.hospital.web;
 
 import com.zakaria.hospital.entities.Patient;
 import com.zakaria.hospital.repositories.PatientRepository;
+import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
 @Controller
+@Slf4j
 public class PatientController {
     private PatientRepository patientRepository;
 
@@ -43,5 +51,24 @@ public class PatientController {
     {
         patientRepository.deleteById(id);
         return "redirect:/index?page="+page+"&keyword="+keyword;
+    }
+    @GetMapping("/formPatient")
+    public String formPatient(Model model)
+    {
+        model.addAttribute("patient", new Patient());
+     return "formPatient";
+    }
+    @PostMapping("/save")
+    public String save(Model model, @Valid Patient patient, BindingResult bindResult)
+    {
+        if (bindResult.hasErrors()) {
+            return "formPatient";
+        }
+        log.info(patient.getName());
+        log.info(String.valueOf(patient.getScore()));
+        log.info(String.valueOf(patient.getBirthdate()));
+        log.info(String.valueOf(patient.isSick()));
+        patientRepository.save(patient);
+        return "redirect:/index";
     }
 }
