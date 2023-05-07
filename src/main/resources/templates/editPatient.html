@@ -15,9 +15,12 @@
 <div class="container">
 
 
-    <form th:action="@{/editPatient(id=${patient.getId()})}" method="post" >
+    <form th:action="@{/editPatient}" method="post" >
         <div class="row">
             <div class="col-6">
+                <input type="hidden"   class="form-control" name="id"
+                       id="id" th:value="${patient.id}"
+                >
 
                 <label for="name" class="form-label">Name:</label>
                 <input type="text" class="form-control" name="name"

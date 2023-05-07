@@ -81,15 +81,10 @@ public class PatientController {
         return "editPatient";
     }
     @PostMapping("/editPatient")
-    public String editPatient(@RequestParam(name = "id") Long id, @Valid Patient patient, BindingResult bindResult) {
+    public String editPatient(@Valid Patient patient, BindingResult bindResult) {
         if(bindResult.hasErrors()) {
             return "editPatient";
         }
-        Patient patient1 = patientRepository.findById(id).get();
-        patient1.setBirthdate(patient.getBirthdate());
-        patient1.setName(patient.getName());
-        patient1.setSick(patient.isSick());
-        patient1.setScore(patient.getScore());
         patientRepository.save(patient);
         return "redirect:/index";
     }
