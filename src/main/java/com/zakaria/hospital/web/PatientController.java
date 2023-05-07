@@ -5,6 +5,7 @@ import com.zakaria.hospital.repositories.PatientRepository;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.Banner;
 import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -61,13 +62,34 @@ public class PatientController {
     @PostMapping("/save")
     public String save(Model model, @Valid Patient patient, BindingResult bindResult)
     {
-        if (bindResult.hasErrors()) {
+        if(bindResult.hasErrors()) {
             return "formPatient";
         }
         log.info(patient.getName());
         log.info(String.valueOf(patient.getScore()));
         log.info(String.valueOf(patient.getBirthdate()));
         log.info(String.valueOf(patient.isSick()));
+        patientRepository.save(patient);
+        return "redirect:/index";
+    }
+
+    @GetMapping("/edit")
+    public String edit(Model model, @RequestParam(name = "id") Long id)
+    {
+        Patient patient = patientRepository.findById(id).get();
+        model.addAttribute("patient", patient);
+        return "editPatient";
+    }
+    @PostMapping("/editPatient")
+    public String editPatient(@RequestParam(name = "id") Long id, @Valid Patient patient, BindingResult bindResult) {
+        if(bindResult.hasErrors()) {
+            return "editPatient";
+        }
+        Patient patient1 = patientRepository.findById(id).get();
+        patient1.setBirthdate(patient.getBirthdate());
+        patient1.setName(patient.getName());
+        patient1.setSick(patient.isSick());
+        patient1.setScore(patient.getScore());
         patientRepository.save(patient);
         return "redirect:/index";
     }
