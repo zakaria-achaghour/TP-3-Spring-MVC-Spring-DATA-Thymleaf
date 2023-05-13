@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;
 
@@ -31,5 +34,10 @@ public class HospitalApplication implements CommandLineRunner {
 		// patientRepository.save(new Patient(null, "za", new Date(),true, 44));
 		// patientRepository.save(new Patient(null, "the", new Date(),true, 45));
 		// patientRepository.save(new Patient(null, "H2", new Date(),true, 33));
+	}
+
+	@Bean
+	PasswordEncoder passwordEncoder () {
+		return new BCryptPasswordEncoder();
 	}
 }
