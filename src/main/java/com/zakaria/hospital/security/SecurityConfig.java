@@ -9,7 +9,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
@@ -18,7 +21,16 @@ public class SecurityConfig {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Bean
+    public JdbcUserDetailsManager jdbcUserDetailsManager (DataSource dataSource) {
+        // to work with jdbc Authentication
+        // need for the tables to be created
+        // in the schema.sql
+        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
+        return jdbcUserDetailsManager;
+    }
+   // @Bean
     public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
         return new InMemoryUserDetailsManager(
                 // {noop} to not compare the password encoder | do not encode the password
@@ -35,7 +47,7 @@ public class SecurityConfig {
         httpSecurity.rememberMe();
         httpSecurity.authorizeHttpRequests().requestMatchers("/webjars/**").permitAll();
        // httpSecurity.authorizeHttpRequests().requestMatchers("/user/**").hasAnyRole("USER", "ADMIN");
-       // httpSecurity.authorizeHttpRequests().requestMatchers("/admin/**").hasRole("ADMIN");
+       // httpSecurity.authorizeHttpRequests().requestMatchers("/admin/**").hasRole("ADMIN"); // user annotation
         httpSecurity.authorizeHttpRequests().anyRequest().authenticated();
         httpSecurity.exceptionHandling().accessDeniedPage("/notAuthorized");
         return httpSecurity.build();
